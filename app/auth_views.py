@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 
-# ------------------ LOGIN ------------------
 def logindj(request):
     if request.method == "POST":
         username = request.POST.get('username')

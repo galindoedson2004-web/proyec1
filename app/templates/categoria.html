@@ -28,13 +28,13 @@
 <div class="d-flex justify-content-end mb-3 p-2">
     <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
-        <button class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
+        <button class="btn btn-outline-danger btn-sm">Cerrar sesion</button>
     </form>
 </div>
 
 <div class="container my-5">
 
-    <h3 class="text-center mb-4">Gestión de Categorías</h3>
+    <h3 class="text-center mb-4">Gestión de Categorias</h3>
 
     {% if messages %}
         {% for message in messages %}
@@ -47,7 +47,7 @@
         
         <div class="col-md-4">
             <div class="card shadow border-0">
-                <div class="card-header color-header text-center">Nueva Categoría</div>
+                <div class="card-header color-header text-center">Nueva Categoria</div>
                 <div class="card-body">
                     <form method="POST">
                         {% csrf_token %}
@@ -57,7 +57,7 @@
                         <div class="mb-2"><input type="text" name="seccion_cat" class="form-control" placeholder="Sección"></div>
                         <div class="mb-2"><input type="text" name="proveedor_cat" class="form-control" placeholder="Proveedor"></div>
                         <div class="mb-3"><input type="number" name="garantia_cat" class="form-control" placeholder="Garantía (meses)" required></div>
-                        <button class="btn btn-guardar w-100" name="crear_categoria">Crear Categoría</button>
+                        <button class="btn btn-guardar w-100" name="crear_categoria">Crear Categoria</button>
                     </form>
                 </div>
             </div>
@@ -66,17 +66,17 @@
     
         <div class="col-md-8">
             <div class="card shadow border-0">
-                <div class="card-header color-header text-center">Categorías Registradas</div>
+                <div class="card-header color-header text-center">Categorias Registradas</div>
                 <div class="card-body table-responsive">
                     <table class="table table-hover text-center align-middle">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
-                                <th>Descripción</th>
+                                <th>Descripcion</th>
                                 <th>Código</th>
-                                <th>Sección</th>
+                                <th>Seccion</th>
                                 <th>Proveedor</th>
-                                <th>Garantía</th>
+                                <th>Garantia</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>

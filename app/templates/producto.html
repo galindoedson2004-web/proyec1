@@ -87,7 +87,7 @@
                         </div>
                         <div class="mb-3">
                             <select name="categoria" class="form-select" required>
-                                <option value="">Seleccione categoría</option>
+                                <option value="">Seleccione categoria</option>
                                 {% for c in categorias %}
                                     <option value="{{ c.id }}">{{ c.nombre }}</option>
                                 {% endfor %}
@@ -98,7 +98,7 @@
                 </div>
             </div>
 
-            <a href="{% url 'categoria' %}" class="btn btn-secondary w-100 mt-3">Ir a Categorías</a>
+            <a href="{% url 'categoria' %}" class="btn btn-secondary w-100 mt-3">Ir a Categorias</a>
         </div>
 
         
@@ -111,9 +111,9 @@
                             <tr>
                                 <th>Imagen</th>
                                 <th>Nombre</th>
-                                <th>Descripción</th>
+                                <th>Descripcion</th>
                                 <th>Marca</th>
-                                <th>Categoría</th>
+                                <th>Categoria</th>
                                 <th>Precio</th>
                                 <th>Stock</th>
                                 <th>Acciones</th>

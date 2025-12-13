@@ -12,7 +12,6 @@ def categoria(request):
     categorias = Categoria.objects.all()
     edit_cat = Categoria.objects.filter(id=request.GET.get("edit_cat")).first()
 
-    # CREAR
     if "crear_categoria" in request.POST:
         Categoria.objects.create(
             nombre=request.POST.get('nombre_cat', ''),
@@ -25,7 +24,6 @@ def categoria(request):
         messages.success(request, "Categoria creada correctamente")
         return redirect("categoria")
 
-    # EDITAR
     if "update_categoria" in request.POST:
         cat = Categoria.objects.filter(id=request.POST.get("cat_id")).first()
         if cat:
@@ -39,7 +37,6 @@ def categoria(request):
             messages.success(request, "Categoria actualizada correctamente")
         return redirect("categoria")
 
-    # ELIMINAR
     if "eliminar_categoria" in request.POST:
         Categoria.objects.filter(id=request.POST.get("cat_id")).delete()
         messages.success(request, "Categoria eliminada correctamente")

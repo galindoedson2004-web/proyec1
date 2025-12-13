@@ -98,10 +98,10 @@
         {% if user.is_authenticated %}
             <form method="POST" action="{% url 'logout' %}" class="d-inline">
                 {% csrf_token %}
-                <button class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
+                <button class="btn btn-outline-danger btn-sm">Cerrar sesion</button>
             </form>
         {% else %}
-            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm">Iniciar sesión</a>
+            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm">Iniciar sesion</a>
         {% endif %}
     </div>
 </nav>
