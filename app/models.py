@@ -7,6 +7,7 @@ class Categoria(models.Model):
     seccion = models.CharField(max_length=40)
     proveedor = models.CharField(max_length=20)
     garantia = models.IntegerField()
+    
 
     def __str__(self):
         return self.nombre
@@ -18,6 +19,7 @@ class Producto(models.Model):
     stock = models.IntegerField()
     marca = models.CharField(max_length=20)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    imagen = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.nombre

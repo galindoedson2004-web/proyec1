@@ -16,32 +16,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import logindj, menu_view, registerdj,producto
-from django.shortcuts import redirect
 from app.api import api_productos, api_categorias
-from app import views
 
-
-
-
+from app.auth_views import logindj, registerdj
+from app.menu_views import menu_view, logoutdj
+from app.producto_views import producto
+from app.categoria_views import categoria
 
 urlpatterns = [
+    
     path('admin/', admin.site.urls),
+
+    
     path('', menu_view, name='home'),
+    path('menu/', menu_view, name='menu'),
     path('login/', logindj, name='login'),
-path('menu/', views.menu_view, name='menu'),
     path('register/', registerdj, name='register'),
+    path('logout/', logoutdj, name='logout'),
+
+    
     path('producto/', producto, name='producto'),
-    path('categoria/', views.categoria, name='categoria'),
-        path('logout/', views.logoutdj, name='logout'),
+    path('categoria/', categoria, name='categoria'),
 
-
-
-
-
-
-
+    
     path('api/productos/', api_productos),
     path('api/categorias/', api_categorias),
-
 ]
