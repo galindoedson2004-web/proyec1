@@ -1,68 +1,139 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Categorías</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Gestión de Categorías</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body { background: #f4f6f9; }
+
+        .color-header { background:#13678A; color:#fff; }
+
+        .btn-guardar { background:#13678A; color:#fff; border:none; }
+        .btn-guardar:hover { background:#0f566f; }
+
+        .btn-editar { background:#F4A261; border:none; color:#000; }
+        .btn-eliminar { background:#E63946; border:none; color:#fff; }
+        .btn-cancelar { background:#6c757d; border:none; color:#fff; }
+
+        table thead { background:#13678A; }
+        table thead th { color:#fff; font-size:13px; text-transform:uppercase; }
+    </style>
 </head>
+<body>
 
-<body class="bg-light">
-
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Gestión de Categorías</h2>
-
-    <!-- FORMULARIO CREACIÓN -->
-    <form method="POST" class="card p-4 mb-4 shadow">
+<!-- ENCABEZADO -->
+<div class="d-flex justify-content-end mb-3 p-2">
+    <form action="{% url 'menu' %}" method="POST">
         {% csrf_token %}
-
-        <input type="text" class="form-control mb-3" name="nombre" placeholder="Nombre categoría" required>
-
-        <textarea class="form-control mb-3" name="descripcion" placeholder="Descripción" required></textarea>
-
-        <input type="text" class="form-control mb-3" name="codigo" placeholder="Código" required>
-
-        <input type="text" class="form-control mb-3" name="seccion" placeholder="Sección" required>
-
-        <input type="text" class="form-control mb-3" name="proveedor" placeholder="Proveedor" required>
-
-        <input type="number" class="form-control mb-3" name="garantia" placeholder="Garantía (meses)" required>
-
-        <button type="submit" name="crear" class="btn btn-primary">Crear Categoría nose</button>
+        <button class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
     </form>
+</div>
 
-    <!-- TABLA DE CATEGORÍAS -->
-    <table class="table table-bordered table-striped shadow">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Código</th>
-                <th>Sección</th>
-                <th>Proveedor</th>
-                <th>Garantía</th>
-            </tr>
-        </thead>
+<div class="container my-5">
 
-        <tbody>
-            {% for c in categorias %}
-            <tr>
-                <td>{{ c.id }}</td>
-                <td>{{ c.nombre }}</td>
-                <td>{{ c.codigo }}</td>
-                <td>{{ c.seccion }}</td>
-                <td>{{ c.proveedor }}</td>
-                <td>{{ c.garantia }} meses</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center">No hay categorías</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+    <h3 class="text-center mb-4">Gestión de Categorías</h3>
 
-    </table>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success text-center py-1">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
+    <div class="row g-4">
+
+        <!-- IZQUIERDA: FORMULARIO NUEVA CATEGORÍA -->
+        <div class="col-md-4">
+            <div class="card shadow border-0">
+                <div class="card-header color-header text-center">Nueva Categoría</div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-2"><input type="text" name="nombre_cat" class="form-control" placeholder="Nombre" required></div>
+                        <div class="mb-2"><input type="text" name="descripcion_cat" class="form-control" placeholder="Descripción"></div>
+                        <div class="mb-2"><input type="text" name="codigo_cat" class="form-control" placeholder="Código"></div>
+                        <div class="mb-2"><input type="text" name="seccion_cat" class="form-control" placeholder="Sección"></div>
+                        <div class="mb-2"><input type="text" name="proveedor_cat" class="form-control" placeholder="Proveedor"></div>
+                        <div class="mb-3"><input type="number" name="garantia_cat" class="form-control" placeholder="Garantía (meses)" required></div>
+                        <button class="btn btn-guardar w-100" name="crear_categoria">Crear Categoría</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- DERECHA: TABLA CON BOTÓN EDITAR -->
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header color-header text-center">Categorías Registradas</div>
+                <div class="card-body table-responsive">
+                    <table class="table table-hover text-center align-middle">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Código</th>
+                                <th>Sección</th>
+                                <th>Proveedor</th>
+                                <th>Garantía</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for c in categorias %}
+                            {% if edit_cat and edit_cat.id == c.id %}
+                                <!-- FILA EN MODO EDICIÓN -->
+                                <tr>
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="cat_id" value="{{ c.id }}">
+                                        <td><input type="text" name="nombre_cat" value="{{ c.nombre }}" class="form-control form-control-sm"></td>
+                                        <td><input type="text" name="descripcion_cat" value="{{ c.descripcion }}" class="form-control form-control-sm"></td>
+                                        <td><input type="text" name="codigo_cat" value="{{ c.codigo }}" class="form-control form-control-sm"></td>
+                                        <td><input type="text" name="seccion_cat" value="{{ c.seccion }}" class="form-control form-control-sm"></td>
+                                        <td><input type="text" name="proveedor_cat" value="{{ c.proveedor }}" class="form-control form-control-sm"></td>
+                                        <td><input type="number" name="garantia_cat" value="{{ c.garantia }}" class="form-control form-control-sm"></td>
+                                        <td class="d-flex justify-content-center gap-2">
+                                            <button type="submit" name="update_categoria" class="btn btn-guardar btn-sm">Guardar</button>
+                                            <a href="{% url 'categoria' %}" class="btn btn-cancelar btn-sm">Cancelar</a>
+                                        </td>
+                                    </form>
+                                </tr>
+                            {% else %}
+                                <!-- FILA NORMAL -->
+                                <tr>
+                                    <td>{{ c.nombre }}</td>
+                                    <td>{{ c.descripcion }}</td>
+                                    <td>{{ c.codigo }}</td>
+                                    <td>{{ c.seccion }}</td>
+                                    <td>{{ c.proveedor }}</td>
+                                    <td>{{ c.garantia }} meses</td>
+                                    <td class="d-flex justify-content-center gap-2">
+                                        <a href="?edit_cat={{ c.id }}" class="btn btn-editar btn-sm">Editar</a>
+                                        <form method="POST" onsubmit="return confirm('¿Eliminar categoría?');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="cat_id" value="{{ c.id }}">
+                                            <button name="eliminar_categoria" class="btn btn-eliminar btn-sm">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-muted">No hay categorías registradas</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-end mt-3">
+                <a href="{% url 'producto' %}" class="btn btn-outline-primary">Volver a Productos</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>

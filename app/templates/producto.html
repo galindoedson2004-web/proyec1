@@ -1,167 +1,167 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Productos y Categorías</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Gestión de Productos</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f6f8;
+        }
+        .card-header-custom {
+            background: #13678A;
+            color: #fff;
+            font-weight: 600;
+            text-align: center;
+        }
+        table thead {
+            background: #13678A;
+        }
+        table thead th {
+            color: #fff;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        .btn-primary {
+            background: #13678A;
+            border: none;
+        }
+    </style>
 </head>
+<body>
 
-<body class="bg-light">
+<!-- ENCABEZADO -->
+<div class="d-flex justify-content-end mb-3 p-2">
+    <form action="{% url 'logout' %}" method="POST">
+        {% csrf_token %}
+        <button class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
+    </form>
+</div>
 
-<div class="container mt-5">
+<div class="container-fluid my-4">
 
-    <h2 class="text-center mb-4">Gestión de Productos y Categorías</h2>
+    <h3 class="text-center mb-4">Gestión de Productos</h3>
 
-    <div class="row">
+    <!-- MENSAJES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success text-center py-1">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
-        <!-- FORM CATEGORIAS -->
+    <div class="row g-4">
+
+        <!-- IZQUIERDA: FORMULARIO CREAR PRODUCTO -->
         <div class="col-md-4">
-            <div class="card p-3 shadow">
-                <h5 class="text-center">
-                    {% if edit_cat %} Editar Categoría {% else %} Crear Categoría {% endif %}
-                </h5>
-
-                <!-- Si edit_cat existe, el formulario hará update -->
-                <form method="POST">
-                    {% csrf_token %}
-                    {% if edit_cat %}
-                        <input type="hidden" name="cat_id" value="{{ edit_cat.id }}">
-                        <input type="text" class="form-control mb-2" name="nombre_cat" placeholder="Nombre" value="{{ edit_cat.nombre }}" required>
-                        <input type="text" class="form-control mb-2" name="descripcion_cat" placeholder="Descripción" value="{{ edit_cat.descripcion }}">
-                        <input type="text" class="form-control mb-2" name="codigo_cat" placeholder="Código" value="{{ edit_cat.codigo }}">
-                        <input type="text" class="form-control mb-2" name="seccion_cat" placeholder="Sección" value="{{ edit_cat.seccion }}">
-                        <input type="text" class="form-control mb-2" name="proveedor_cat" placeholder="Proveedor" value="{{ edit_cat.proveedor }}">
-                        <input type="number" class="form-control mb-2" name="garantia_cat" placeholder="Garantía (meses)" value="{{ edit_cat.garantia }}" required>
-                        <button class="btn btn-warning w-100" name="update_categoria">Guardar cambios</button>
-                        <a href="{% url 'producto' %}" class="btn btn-secondary w-100 mt-2">Cancelar</a>
-                    {% else %}
-                        <input type="text" class="form-control mb-2" name="nombre_cat" placeholder="Nombre" required>
-                        <input type="text" class="form-control mb-2" name="descripcion_cat" placeholder="Descripción">
-                        <input type="text" class="form-control mb-2" name="codigo_cat" placeholder="Código">
-                        <input type="text" class="form-control mb-2" name="seccion_cat" placeholder="Sección">
-                        <input type="text" class="form-control mb-2" name="proveedor_cat" placeholder="Proveedor">
-                        <input type="number" class="form-control mb-2" name="garantia_cat" placeholder="Garantía (meses)" required>
-                        <button class="btn btn-dark w-100" name="crear_categoria">Crear Categoría</button>
-                    {% endif %}
-                </form>
+            <div class="card shadow-sm">
+                <div class="card-header card-header-custom">Registrar Producto</div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <input type="text" name="nombre" class="form-control" placeholder="Nombre" required>
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" name="descripcion" class="form-control" placeholder="Descripción" required>
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" name="marca" class="form-control" placeholder="Marca" required>
+                        </div>
+                        <div class="mb-2">
+                            <input type="number" step="0.01" name="precio" class="form-control" placeholder="Precio" required>
+                        </div>
+                        <div class="mb-2">
+                            <input type="number" name="stock" class="form-control" placeholder="Stock" required>
+                        </div>
+                        <div class="mb-3">
+                            <select name="categoria" class="form-select" required>
+                                <option value="">Seleccione categoría</option>
+                                {% for c in categorias %}
+                                    <option value="{{ c.id }}">{{ c.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button class="btn btn-primary w-100" name="crear_producto">Guardar Producto</button>
+                    </form>
+                </div>
             </div>
+
+            <a href="{% url 'categoria' %}" class="btn btn-secondary w-100 mt-3">Ir a Categorías</a>
         </div>
 
-        <!-- FORM PRODUCTOS -->
+        <!-- DERECHA: LISTADO Y EDICIÓN -->
         <div class="col-md-8">
-            <div class="card p-3 shadow">
-                <h5 class="text-center">
-                    {% if edit_prod %} Editar Producto {% else %} Crear Producto {% endif %}
-                </h5>
-
-                <form method="POST">
-                    {% csrf_token %}
-                    {% if edit_prod %}
-                        <input type="hidden" name="prod_id" value="{{ edit_prod.id }}">
-                        <input type="text" name="nombre" class="form-control mb-2" placeholder="Nombre" value="{{ edit_prod.nombre }}" required>
-                        <input type="text" name="descripcion" class="form-control mb-2" placeholder="Descripción" value="{{ edit_prod.descripcion }}" required>
-                        <input type="number" step="0.01" name="precio" class="form-control mb-2" placeholder="Precio" value="{{ edit_prod.precio }}" required>
-                        <input type="number" name="stock" class="form-control mb-2" placeholder="Stock" value="{{ edit_prod.stock }}" required>
-                        <input type="text" name="marca" class="form-control mb-2" placeholder="Marca" value="{{ edit_prod.marca }}" required>
-
-                        <select name="categoria" class="form-control mb-2" required>
-                            <option value="">Seleccione categoría</option>
-                            {% for c in categorias %}
-                                <option value="{{ c.id }}" {% if edit_prod.categoria.id == c.id %}selected{% endif %}>{{ c.nombre }}</option>
-                            {% endfor %}
-                        </select>
-
-                        <button class="btn btn-warning w-100" name="update_producto">Guardar cambios</button>
-                        <a href="{% url 'producto' %}" class="btn btn-secondary w-100 mt-2">Cancelar</a>
-
-                    {% else %}
-                        <input type="text" name="nombre" class="form-control mb-2" placeholder="Nombre" required>
-                        <input type="text" name="descripcion" class="form-control mb-2" placeholder="Descripción" required>
-                        <input type="number" step="0.01" name="precio" class="form-control mb-2" placeholder="Precio" required>
-                        <input type="number" name="stock" class="form-control mb-2" placeholder="Stock" required>
-                        <input type="text" name="marca" class="form-control mb-2" placeholder="Marca" required>
-
-                        <select name="categoria" class="form-control mb-2" required>
-                            <option value="">Seleccione categoría</option>
-                            {% for c in categorias %}
-                                <option value="{{ c.id }}">{{ c.nombre }}</option>
-                            {% endfor %}
-                        </select>
-
-                        <button class="btn btn-primary w-100" name="crear_producto">Crear Producto</button>
-                    {% endif %}
-                </form>
+            <div class="card shadow-sm">
+                <div class="card-header card-header-custom">Productos Registrados</div>
+                <div class="card-body table-responsive">
+                    <table class="table table-hover align-middle text-center">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Marca</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for p in productos %}
+                            <tr>
+                                {% if edit_prod and edit_prod.id == p.id %}
+                                    <!-- MODO EDICIÓN -->
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="prod_id" value="{{ p.id }}">
+                                        <td><input type="text" name="nombre" value="{{ p.nombre }}" class="form-control form-control-sm"></td>
+                                        <td><input type="text" name="descripcion" value="{{ p.descripcion }}" class="form-control form-control-sm"></td>
+                                        <td><input type="text" name="marca" value="{{ p.marca }}" class="form-control form-control-sm"></td>
+                                        <td>
+                                            <select name="categoria" class="form-select form-select-sm">
+                                                {% for c in categorias %}
+                                                    <option value="{{ c.id }}" {% if c.id == p.categoria.id %}selected{% endif %}>{{ c.nombre }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td><input type="number" step="0.01" name="precio" value="{{ p.precio }}" class="form-control form-control-sm"></td>
+                                        <td class="d-flex justify-content-center gap-2">
+                                            <button type="submit" name="update_producto" class="btn btn-sm btn-success">Guardar</button>
+                                            <a href="{% url 'producto' %}" class="btn btn-sm btn-secondary">Cancelar</a>
+                                        </td>
+                                    </form>
+                                {% else %}
+                                    <!-- MODO NORMAL -->
+                                    <td>{{ p.nombre }}</td>
+                                    <td>{{ p.descripcion }}</td>
+                                    <td>{{ p.marca }}</td>
+                                    <td>{{ p.categoria.nombre }}</td>
+                                    <td>S/ {{ p.precio }}</td>
+                                    <td class="d-flex justify-content-center gap-2">
+                                        <a href="?edit_prod={{ p.id }}" class="btn btn-sm btn-warning">Editar</a>
+                                        <form method="POST" onsubmit="return confirm('¿Eliminar producto?');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="prod_id" value="{{ p.id }}">
+                                            <button name="eliminar_producto" class="btn btn-sm btn-danger">Eliminar</button>
+                                        </form>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-muted">No hay productos registrados</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
     </div>
-
-    <!-- TABLA CATEGORIAS -->
-    <h4 class="mt-5">Categorías Registradas</h4>
-    <table class="table table-bordered table-striped shadow">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Garantía</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in categorias %}
-            <tr>
-                <td>{{ c.id }}</td>
-                <td>{{ c.nombre }}</td>
-                <td>{{ c.garantia }} meses</td>
-                <td class="d-flex gap-2">
-                    <a href="?edit_cat={{ c.id }}" class="btn btn-warning btn-sm">Editar</a>
-
-                    <form method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?');">
-                        {% csrf_token %}
-                        <input type="hidden" name="cat_id" value="{{ c.id }}">
-                        <button name="eliminar_categoria" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
-
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- TABLA PRODUCTOS -->
-    <h4 class="mt-4">Productos Registrados</h4>
-    <table class="table table-bordered table-striped shadow">
-        <thead class="table-dark">
-            <tr>
-                <th>Nombre</th>
-                <th>Marca</th>
-                <th>Categoría</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for p in productos %}
-            <tr>
-                <td>{{ p.nombre }}</td>
-                <td>{{ p.marca }}</td>
-                <td>{{ p.categoria.nombre }}</td>
-                <td>S/ {{ p.precio }}</td>
-                <td class="d-flex gap-2">
-                    <a href="?edit_prod={{ p.id }}" class="btn btn-warning btn-sm">Editar</a>
-
-                    <form method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
-                        {% csrf_token %}
-                        <input type="hidden" name="prod_id" value="{{ p.id }}">
-                        <button name="eliminar_producto" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-
-    </table>
 </div>
 
 </body>

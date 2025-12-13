@@ -18,16 +18,30 @@ from django.contrib import admin
 from django.urls import path
 from app.views import logindj, menu_view, registerdj,producto
 from django.shortcuts import redirect
+from app.api import api_productos, api_categorias
+from app import views
 
 
-def home_redirect(request):
-    return redirect('login')
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home_redirect),
+    path('', menu_view, name='home'),
     path('login/', logindj, name='login'),
-    path('menu/', menu_view, name='menu'),
+path('menu/', views.menu_view, name='menu'),
     path('register/', registerdj, name='register'),
     path('producto/', producto, name='producto'),
+    path('categoria/', views.categoria, name='categoria'),
+        path('logout/', views.logoutdj, name='logout'),
+
+
+
+
+
+
+
+    path('api/productos/', api_productos),
+    path('api/categorias/', api_categorias),
+
 ]

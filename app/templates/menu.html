@@ -1,11 +1,71 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Menú</title>
+    <title>Electronics</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
-<body>
-    <h1>¡Bienvenido al menú!</h1>
-    <a href="/login/">Cerrar sesión</a>
+
+<body class="bg-light">
+
+<!-- ENCABEZADO -->
+<nav class="navbar navbar-light bg-white shadow-sm px-4">
+    <span class="navbar-brand fw-bold fs-4">Electronics</span>
+
+    <div>
+        {% if user.is_authenticated %}
+            <!-- BOTÓN CERRAR SESIÓN -->
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-danger btn-sm">
+                    Cerrar sesión
+                </button>
+            </form>
+        {% else %}
+            <!-- BOTÓN INICIAR SESIÓN -->
+            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm">
+                Iniciar sesión
+            </a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="container mt-5">
+
+    {% if user.is_authenticated %}
+        <!-- SOLO LOGUEADO VE PRODUCTOS -->
+        <h3 class="text-center mb-4">Productos disponibles</h3>
+
+        <div class="row">
+            {% for p in productos %}
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ p.nombre }}</h5>
+                            <p class="card-text">
+                                Marca: {{ p.marca }} <br>
+                                Categoría: {{ p.categoria.nombre }} <br>
+                                Precio: S/ {{ p.precio }} <br>
+                                Stock: {{ p.stock }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-muted">No hay productos</p>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <!-- NO LOGUEADO: NADA EN EL MEDIO -->
+        <p class="text-center text-muted fs-5">
+            Inicia sesión para ver los productos
+        </p>
+    {% endif %}
+
+</div>
+
 </body>
 </html>
